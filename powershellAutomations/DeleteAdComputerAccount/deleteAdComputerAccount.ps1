@@ -1,32 +1,25 @@
 <#
 .DESCRIPTION
-
     This script is used in the AVD Pipeline to delete the computer accounts
     The ADDS computer accoutns are deleted to grant that the domainJoin extension deployment succeed
     by avoiding duplicated names in the specified organizational unity.
 
 .PARAMETER ouPath
-    
     This is the path where the computer accounts of the AVD Environment are stored
 
 .PARAMETER userName
-
     Username that has permission to delete the computer accounts in the ADDS, the user should be like DOMAINNAME\USERNAME
 
 .PARAMETER kvName
-
     Parameter used to store the keyVault the contains the password of the userName parameter
 
 .PARAMETER secretName
-
     Parameter used to store the password of the userName in the kvName
 
 .PARAMETER subscriptionKeyVault
-
     Parameter used to store the subscription name where the keyVault is allocated
 
 .PARAMETER domainControllerName
-
     Parameter used to store the name of the domain controller in the Azure network
 
 .Example 
@@ -37,11 +30,9 @@
                                 -subscriptionKeyVault <subscriptionKeyVault> `
                                 -domainControllerName <domainControllerName> 
 .NOTES
-    
-    Version: 1
+    Version: 1.0
     Author: Estevão França
     Date: 12/15/2022
-    Version Note: This initial version only deletes the computer accounts and tracks the script actions in the logFileName variable
 #>
 
 param

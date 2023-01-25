@@ -1,42 +1,32 @@
 <#
 .DESCRIPTION
-
     This automation is used to create a new token to register session hosts in an existent Azure Virtual Desktop host pool.
 
 .PARAMETER avdSubscriptionName
-
     This parameter contains the name of the subscription where the AVD Host pool and KeyVault is.
 
 .PARAMETER avdHostPoolName
-
     This parameter contains the name of the host pool that the automation will generate a new secret.
 
 .PARAMETER avdResourceGroupName
-
     This parameter contains the name of the resource group where the host pools is located.
 
 .PARAMETER keyVaultName
-
     This parameter contains the name of the name of the key vault where the token Secret is.
 
 .PARAMETER avdTokenSecret
-
     This parameter contains the name of the name of the secret that the token will be stored.
 
 .Example 
-
     ./generateAvdTokenId.ps1    -adSubscriptionName <subscriptionName> `
                                 -avdHostPoolName <name of the host pool> `
                                 -avdResourceGroupName <name of the resource group> `
                                 -keyVaultName <name of the key vault> `
                                 -avdTokenSecret <name of the secret that will store the secret>
 .NOTES
-
     Version: 1.0
     Author: Estevão França
     Date: 12/16/2022
-    Version Notes: This version stores the token as a secret in the specified keyvault. The keyVault & Secret used in this automation
-    needs to be the same defined in the ARM Template parameters reference.
 #>
 
 #Parameters section

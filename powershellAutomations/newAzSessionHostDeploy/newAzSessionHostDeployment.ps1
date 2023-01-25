@@ -1,23 +1,24 @@
 <#
 .DESCRIPTION
-    This script is responsible to deploy the VM's
+    This script is responsible to deploy the Virtual Machines in the Azure subscription and execute the AVD Post deployment.
 .PARAMETER templateFile
-    
+    This parameter needs to contain the template file path
 .PARAMETER templateParametersFile
-    
+    This parameter needs to contain the template parameters file path
 .PARAMETER avdResourceGroupName
-    
-.PARAMETER subscriptionKeyVault
-    
+    This parameter needs to contain the resource group where the resources will be deployed    
+.PARAMETER subscription
+    This parameter needs to contain the subscription where the resources will be deployed/billed
 
 .Example 
-    ./newAzSessionHostDeployment    -templateFile <> `
-                                    -templateParametersFile <> `
-                                    -avdResourceGroupName <> `
-                                    -subscriptionKeyVault <> 
+    ./newAzSessionHostDeployment    -templateFile <sessionHostTemplate/template.json> `
+                                    -templateParametersFile <sessionHostTemplate/parameters.json> `
+                                    -avdResourceGroupName <avdResourceGroupName> `
+                                    -subscription <yourSubscriptionid> 
 
 .NOTES
-    Version: 1
+    Version: 1.0
+    Author: Estevão França
     Date: 12/15/2022
     Version Note: This initial version only deletes the computer accounts and tracks the script actions in the logFileName variable
 #>
@@ -34,8 +35,7 @@ param
     [string]$avdResourceGroupName,    
     
     [parameter(Mandatory=$true,HelpMessage="Subscription where the resources will be deployed")]
-    [string]$subscriptionKeyVault
-
+    [string]$subscription
 )
 
 #Region Fixed Parameters
@@ -89,19 +89,19 @@ else
 
 #Endregion
 
-#Connection on Azure
+#Region Connection on Azure
 Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " =  [INFO] Selecting the Azure Subscription...." 
 logState -state "INFO" -logMessage "Selecting the azure subscription"
 try
 {
-    $null = Set-AzContext -Subscription $subscriptionKeyVault
+    $null = Set-AzContext -Subscription $subscription
     logState -state "INFO" -logMessage "Subscription selected with success"
 }
 catch
 {
     powershellLogging -codeSection "Selecting azure Subscription"
 }
-
+#Endregion
 
 $deploymentName = "deploying-az-host-pool-" + (Get-Random)
 
@@ -117,6 +117,11 @@ try
     {
         Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " =  [ERROR] The deployment failed!" 
         logState -state "ERROR" -logMessage "The deployment failed!"
+    }
+    else
+    {
+        #show outputs
+        Write-Host ($outputs | Format-List | Out-String)
     }
 }
 catch

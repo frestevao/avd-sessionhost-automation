@@ -1,29 +1,26 @@
 <#
-.DESCRIPTION
-    
+.DESCRIPTION    
     This script is used to remove all session hosts on a specific host pool
     It also deletes the VM's container, Disks and Network Adapter.  
 
-.PARAMETER avdHostPool
+.PARAMETER avdSubscriptionName
+    Subscription where the resources are stored/billed
 
+.PARAMETER avdHostPool
     This parameter is used to store the name of the AVD Hostpool that the automation will delete the session hosts
 
 .PARAMETER avdResourceGroupName
-
     This parameter is used to store the name of the resourceGroup where the hostPool is stored
 
 .Example 
-
     ./deleteSessionHost.ps1 -avdHostPoolName <hostPoolName> `
-                            -avdResourceGroupName <avdResourceGroupName>
+                            -avdResourceGroupName <avdResourceGroupName> `
+                            -avdSubscriptionName <Subscription name or SubscriptionId>
 .NOTES
-
     Version: 1.0
     Author: Estevão França
     Date: 12/14/2022
-    Version Notes: This initial version deletes the VM's based in the host pool active session hosts.
-
-    #>
+#>
 
 #Parameters section
 param(
@@ -57,7 +54,7 @@ function powershellLogging ([string]$codeSection)
     $null = (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = [ERROR]" + $_.Exception >> $logFileName
     
     #information about where excemption was thrown
-    (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = [ERROR]" + $PSItem.InvocationInfo | Format-List * >> $logFileName #can also use $psItem instead of $_.
+    (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = [ERROR]" + $PSItem.InvocationInfo | Format-List * >> $logFileName
 }
 
 function logState([string]$state,[string]$logMessage)
@@ -69,7 +66,7 @@ function deleteAzureVm($vmName)
 {
     #Getting VM Details
     Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString()  " = [INFO]" "Getting VM Details"
-    logState -state "INFO" -logMessage "GETTING VM DETAILS"
+    logState -state "INFO" -logMessage "Getting VM Details"
     
     try
     {
@@ -415,6 +412,5 @@ else
         }
         
         $null = "=============" >> $logFileName
-
     }
 }

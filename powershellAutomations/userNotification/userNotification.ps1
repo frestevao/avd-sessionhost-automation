@@ -54,7 +54,7 @@ function powershellLogging ([string]$codeSection)
     $null = (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = " + $_.Exception >> $logFileName
     
     #information about where excemption was thrown
-    (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = " + $PSItem.InvocationInfo | Format-List * >> $logFileName #can also use $psItem instead of $_.
+    (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() + " = " + $PSItem.InvocationInfo | Format-List * >> $logFileName 
 }
 function logState([string]$state,[string]$logMessage)
 {
@@ -114,16 +114,16 @@ catch
 
 if($null -eq $sessionHostPool)
 {
-    Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Not able to identify session hosts on the provided host pool"
-    logState -state "INFO" -logMessage "Not able to identify session hosts on the provided host pool"
+    Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Not able to identify session hosts in the provided host pool"
+    logState -state "INFO" -logMessage "Not able to identify session hosts in the provided host pool"
 }
 else 
 {
     Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Provided host pool contains" $sessionHostPool.Name.count "Session hosts"
     logState -state "INFO" -logMessage "Provided host pool contains" $sessionHostPool.Name.count "Session hosts" 
     
-    Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Starting the analyses of active sessions..."
-    logState -state "INFO" -logMessage "Starting the analyses of active sessions"
+    Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Looking for active sessions..."
+    logState -state "INFO" -logMessage "Looking for active sessions"
 
     foreach($sessionHost in $sessionHostPool)
     {
@@ -131,14 +131,14 @@ else
         #Ajusting the computer name pattern
         $sessionHostName = $sessionHost.Name.Split('/')[1]
         
-        Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Starting the analyses in the session host:" $sessionHostName
-        logState -state "INFO" -logMessage "Starting the analyses in the session host:" $sessionHostName
+        Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Getting the details of the session host:" $sessionHostName
+        logState -state "INFO" -logMessage "Getting the details of the session host:" $sessionHostName
 
         #Enabling Drain Mode
         try
         {
-            Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Enabling drain mode to avoid new connections in the session host"
-            logState -state "INFO" -logMessage "Enabling drain mode to avoid new connections in the session host"
+            Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] Enabling drain mode to avoid new connections"
+            logState -state "INFO" -logMessage "Enabling drain mode to avoid new connections"
 
             $null = Update-AzWvdSessionHost -ResourceGroupName $avdResourceGroupName `
                                             -HostPoolName $avdHostPoolName `
@@ -198,6 +198,7 @@ else
                     Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] logged user name" $userName 
                     logState -state "INFO" -logMessage "Logged user name: " $userName  $logFileName
 
+                    #Message Section
                     [string]$messageTitle = "ALERT! Server Mainatence"
                     [string]$messageBody = "Dear user, " + $userName + " Your session Will be deactivated in 5   minutes, please save your work"
                         
@@ -238,5 +239,5 @@ if($null -eq $sessionHostPool)
 else
 {
     Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [WARNING] Starting the countdown for user finish their job"
-    $null = Start-Sleep -Seconds 60
+    $null = Start-Sleep -Seconds 300
 }

@@ -1,7 +1,17 @@
 # __AZURE VIRTUAL DESKTOP - ENVIRONMENT MAINANTENCE__
 
-
 This is a fork of the original source code of the AVD automation and it will be maintained by the author and community contributors.
+
+<br><br>
+
+ 🛠 &nbsp;Technologies
+
+![GitHub](https://img.shields.io/badge/-GitHub-05122A?style=flat&logo=github)&nbsp;
+![Azure](https://img.shields.io/badge/-azurevirtualdesktop-05122A?style=flat&logo=wvd)&nbsp;
+![Pipelines](https://img.shields.io/badge/-pipelines-05122A?style=flat&logo=azureDevOps)&nbsp;
+![Azure Resource Manager](https://img.shields.io/badge/-Azure%20Resource%20Manager-05122A?style=flat&logo=arm)&nbsp;
+![PowerShell Core](https://img.shields.io/badge/-powershellcore-05122A?style=flat&logo=powershell)&nbsp;
+<br><br>
 
 Contents:
 ---
@@ -208,10 +218,51 @@ Is required to use a specific organizational unity for this automation as the sc
 ### __<a name="userNotification">userNotification.ps1</a>__
 ---
 
-The userNotification.ps1 is responsible to check the session hosts avalable in the environment and notify the active users that a mainantance will happen in a few minutes and that they should save their job and finish de session.
+The [userNotification.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/userNotification/userNotification.ps1) is responsible to check if the available session hosts contains any active session and, if the session state is equal __"Active"__, the script sends a notification to the user desktop warning them that the environment will unavailable for a couple of minutes. It also allows the user to end their pending tasks (by default, the script waits 5 minutes)
+
+The message is tottaly customized and you can change it in the variable ```$messageBody```, below you find the parameters used.
+
+```pwsh 
+#AVD user notification section
+Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [WARNING] The user Session is active!"
+Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [WARNING] Sending an alert to the user"
+
+logState -state "WARNING" -logMessage "Sending notification to the active users"
+
+#Generating user details variables
+
+$userName = $activeSession.ActiveDirectoryUserName.Split('\')[1]                    
+Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " = [INFO] logged user name" $userName 
+logState -state "INFO" -logMessage "Logged user name: " $userName  $logFileName
+
+#Message Section
+[string]$messageTitle = "ALERT! Server Mainatence"
+[string]$messageBody = "Dear user, " + $userName + " Your session Will be deactivated in 5   minutes, please save your work"
+
+#Sending message to the user
+
+try
+  {
+    $null = Send-AzWvdUserSessionMessage  `
+                                        -ResourceGroupName $avdResourceGroupName `
+                                        -HostPoolName $avdHostPoolName `
+                                        -SessionHostName $sessionHostName `
+                                        -UserSessionId $activeSession.Id.Split('/')[12] `
+                                        -MessageTitle $messageTitle `
+                                        -MessageBody  $messageBody
+                        
+      logState -state "INFO" -logMessage "Alert sent!" 
+  }
+  catch
+  {
+    #Calling logging function
+    powershellLogging -codeSection "Sending message to the user"
+  }
+
+```
 
 ```pwsh
-#Example
+#Execution example
 
 ./avdUserNotification.ps1   -avdHostPoolName <hostPoolName> `
                             -avdResourceGroupName <avdResourceGroupName> `
@@ -221,15 +272,87 @@ The userNotification.ps1 is responsible to check the session hosts avalable in t
 
 ### __<a name="deleteSessionHost">deleteSessionHost.ps1</a>__
 ---
+
+The [deleteSessionHost.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/deleteSessionHost/deleteSessionHost.ps1) is responsible to delete the VM's and dependencies (Disk and Network Adapter).
+
+> WARNING: This automation deletes the session host from the Host Pool and the Virtual Machine Container.
+> This process is irreversible and needs to be wisly used.            
+
+```pwsh
+#Execution example
+
+./deleteSessionHost.ps1 -avdHostPoolName <hostPoolName> `
+                        -avdResourceGroupName <avdResourceGroupName> `
+                        -avdSubscriptionName <Subscription name or SubscriptionId>
+```
+
 ### __<a name="generateAvdTokenId">generateAvdTokenId.ps1</a>__
 ---
+
+The [generateAvdTokenId.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/generateAvdTokenId/generateAvdTokenId.ps1) is responsible to create the AVD Registration Token. To grant that the proccess can happen automatically, I used a Key Vault to store the registration token as a secret.
+
+```pwsh
+#Execution Example
+./generateAvdTokenId.ps1    `
+                            -adSubscriptionName <subscriptionName> `
+                            -avdHostPoolName <name of the host pool> `
+                            -avdResourceGroupName <name of the resource group> `
+                            -keyVaultName <name of the key vault> `
+                            -avdTokenSecret <name of the secret that will store the secret>
+```
+
 ### __<a name="deleteAdComputerAccount">deleteAdComputerAccount.ps1</a>__
 ---
+
+The [deleteAdComputerAccount.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/DeleteAdComputerAccount/deleteAdComputerAccount.ps1) is responsible to delete the computer accounts in an specified organizational unity and, to this we used the parameter called credential to specified a user that has a privilege to manage the OU. 
+
+To grant the access for a specific OU, you can use the [delegation control](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/delegating-administration-by-using-ou-objects).
+
+> WARNING: This automation deletes all computer accounts in the specified organizational unity, please, be aware that this proccess may be irreversible.
+
+
+```pwsh
+#Execution Example
+./deleteAdComputerAccount   `
+                            -ouPath <OU=FSLOGIX,OU=AZURE-VIRTUAL-DESKTOP,OU=COMPUTERS,OU=ORGANIZATION,DC=myDomain,DC=com> `
+                            -userName <DOMAINNAME\USER> `
+                            -kvName <myKeyVault> `
+                            -secretName <mySecretName> `
+                            -subscriptionKeyVault <subscriptionKeyVault> `
+                            -domainControllerName <domainControllerName> 
+
+```
+
 ### __<a name="newAzSessionHostDeploy">newAzSessionHostDeploy.ps1</a>__
 ---
+The [newAzSessionHostDeployment.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/newAzSessionHostDeploy/newAzSessionHostDeployment.ps1) is responsible to trigger the deployment of the session hosts.
+
+The base templates are available [in this repository](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/sessionHostTemplate) but, you can use your own. [Microsoft also has a documentation for AVD](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/wvd/eslz-platform-automation-and-devops) and automations that you can take a look to improve it to your environment.
+
+>WARNING: All parameters are empty, you need to full fille the template parameters file with the keys of your environment.
+
+```pwsh
+#Execution Example
+./newAzSessionHostDeployment    `
+                                -templateFile <sessionHostTemplate/template.json> `
+                                  -templateParametersFile <sessionHostTemplate/parameters.json> `
+                                  -avdResourceGroupName <avdResourceGroupName> `
+                                  -subscription <yourSubscriptionid> 
+```
+
 ### __<a name="addVmToLawsWorkspace">addVmToLawsWorkspace.ps1</a>__
 ---
 
+The [addVmToLawsWorkspace.ps1](https://github.com/frestevao/avd-sessionhost-automation/blob/4baa71d5ee1db64a08e768bcfb8e6315b2b04a93/powershellAutomations/addVmToLawsWorkspace/addVmToLawsWorkSpace.ps1) is used to configure the VM's in a specific logAnalitcs workspace in case your team uses the AVD Insights Preview.
+
+```pwsh
+#Execution Example
+./deleteAdComputerAccount   `
+                            -subscription <"subscription where the vm's  where deployed">  `
+                            -workspaceId <Id of the workspace used for AVD/VM Insights> `
+                            -workspaceKey <Secret key of the Workspace> `
+                            -avdVmsResourceGroup "Resource group used to store the AVD VMs"
+```
 # __<a name="contributing">Contributing</a>__
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

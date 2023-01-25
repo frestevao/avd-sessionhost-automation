@@ -1,43 +1,36 @@
 <#
 .DESCRIPTION
-
     This automation configures all VM's from the specified resource group in a Log Analytics Workspace
     The LAWS is used as a requirement for the Azure Application insights.
 
 .PARAMETER workspaceKey
-    
     The key used in the 
 
 .PARAMETER workspaceId
-
     Parameter used to store the keyVault the contains the password of the userName parameter
 
-.PARAMETER subscriptionLaws
-
+.PARAMETER subscription
     Parameter used to store the subscription name where the keyVault is allocated
 
 .PARAMETER avdVmsResourceGroup
-    
     Parameter used to store the name of the domain controller in the Azure network
 
 .Example 
-    ./deleteAdComputerAccount   -subscriptionLaws `
+    ./deleteAdComputerAccount   -subscription `
                                 -workspaceId `
                                 -workspaceKey `
                                 -avdVmsResourceGroup
 
 .NOTES
-
     Version: 1.0
     Author: Estevão França
     Date: 01/21/2023
-    Version Note: This automation configures the log analytics in all VM's in the specified resource Group.
 #>
 
 param
 (
     [parameter(Mandatory=$true,HelpMessage="subscriptionid where the laws is stored")]
-    [string]$subscriptionLaws,
+    [string]$subscription,
 
     [parameter(Mandatory=$true,HelpMessage="resource group used to store the VM's")]
     [string]$avdVmsResourceGroup,
@@ -104,7 +97,7 @@ Write-Host (Get-Date -Format 'MM/dd/yyyy HH:mm:ss').ToString() " =  [INFO] Selec
 logState -state "INFO" -logMessage "Selecting the azure subscription"
 try
 {
-    $null = Set-AzContext -Subscription $subscriptionLaws
+    $null = Set-AzContext -Subscription $subscription
     logState -state "INFO" -logMessage "Subscription selected with success"
 }
 catch
