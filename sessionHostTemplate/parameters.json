@@ -1,0 +1,224 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "artifactsLocation": {
+            "value": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_10-27-2022.zip"
+        },
+        "nestedTemplatesLocation": {
+            "value": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/armtemplates/Hostpool_10-05-2022/nestedTemplates/"
+        },
+        "hostpoolToken": {
+            "reference": {
+                "keyVault": {
+                    "id": "<URI of the Key Vault Used to store the hostpool token>"
+                },
+                "secretName": "<Name of the secret used to store the token in the keyvault>"
+            }
+        },
+        "hostpoolProperties": {
+            "value": {
+                "friendlyName": "Your AVD Host Pool friendlyName",
+                "description": "Created through the Azure Virtual Desktop extension",
+                "hostPoolType": "Pooled",
+                "personalDesktopAssignmentType": null,
+                "applicationGroupReferences": [
+                    "URI of the Application groups used in the Azure Virtual Desktop"
+                ],
+                "customRdpProperty": "drivestoredirect:s:;audiomode:i:0;videoplaybackmode:i:1;redirectclipboard:i:0;redirectprinters:i:0;devicestoredirect:s:*;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:*;enablecredsspsupport:i:1;redirectwebauthn:i:1;use multimon:i:0;autoreconnection enabled:i:1;bandwidthautodetect:i:1;networkautodetect:i:1;compression:i:1;audiocapturemode:i:0;camerastoredirect:s:;redirectlocation:i:0;screen mode id:i:2",
+                "maxSessionLimit": 10,
+                "loadBalancerType": "BreadthFirst",
+                "validationEnvironment": false,
+                "ring": null,
+                "registrationInfo": {
+                    "expirationTime": "2022-12-10T03:00:00Z",
+                    "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4NEJBMzVERTg5RjQxODlEQUQ4RDREMUFBRDg3MzBCRkZCNzg2QzAiLCJ0eXAiOiJKV1QifQ.eyJSZWdpc3RyYXRpb25JZCI6IjMzNDNmZDg3LTg4YjEtNGI3MC05MTRjLWM3Yzg3ZjkzNzIyNyIsIkJyb2tlclVyaSI6Imh0dHBzOi8vcmRicm9rZXItZy11cy1yMC53dmQubWljcm9zb2Z0LmNvbS8iLCJEaWFnbm9zdGljc1VyaSI6Imh0dHBzOi8vcmRkaWFnbm9zdGljcy1nLXVzLXIwLnd2ZC5taWNyb3NvZnQuY29tLyIsIkVuZHBvaW50UG9vbElkIjoiN2I3YmM2MjAtMjhmMC00MzBjLWEzM2YtMmU1MGViMWM1MzRkIiwiR2xvYmFsQnJva2VyVXJpIjoiaHR0cHM6Ly9yZGJyb2tlci53dmQubWljcm9zb2Z0LmNvbS8iLCJHZW9ncmFwaHkiOiJVUyIsIkdsb2JhbEJyb2tlclJlc291cmNlSWRVcmkiOiJodHRwczovLzdiN2JjNjIwLTI4ZjAtNDMwYy1hMzNmLTJlNTBlYjFjNTM0ZC5yZGJyb2tlci53dmQubWljcm9zb2Z0LmNvbS8iLCJCcm9rZXJSZXNvdXJjZUlkVXJpIjoiaHR0cHM6Ly83YjdiYzYyMC0yOGYwLTQzMGMtYTMzZi0yZTUwZWIxYzUzNGQucmRicm9rZXItZy11cy1yMC53dmQubWljcm9zb2Z0LmNvbS8iLCJEaWFnbm9zdGljc1Jlc291cmNlSWRVcmkiOiJodHRwczovLzdiN2JjNjIwLTI4ZjAtNDMwYy1hMzNmLTJlNTBlYjFjNTM0ZC5yZGRpYWdub3N0aWNzLWctdXMtcjAud3ZkLm1pY3Jvc29mdC5jb20vIiwiQUFEVGVuYW50SWQiOiIzNmIwYmRiYy1iNTM1LTQ1YmMtYWY4Ni1lMmFiNGU4ZWVhZDMiLCJuYmYiOjE2Njk4MzM0NzIsImV4cCI6MTY3MDY0MTIwMCwiaXNzIjoiUkRJbmZyYVRva2VuTWFuYWdlciIsImF1ZCI6IlJEbWkifQ.fSjrpW1aFKzaMs4iXkZs2r9c5Qf5EG1o4EWE4rwQdQH-CXqqSbPHSEbQqczIaJbYp4fVnSop09OKYJXe9nFtTb_QcpwlOb8iFezlpCMIyfREDtcUxX7PR5qBC-EGuisgRevQVdm-bwYBhOCcVkDIpnE3qttujnxJdg8CYdm7V-Pm-2qcH44L98QLA7shkC5AVFxuvNbxOUp_lCXA20e2LH71KkR1fLJ_Vz19lAXcQyEOnM8H9MB4Hf8jN-Df353dOi8TJrYejBMf7ocoomJyGyfPjOpKVN8q6ltAI8SXilDUbEaNk-RhSxLmNId39vpDpVL1VIofLg_j0YlmZTuZaA",
+                    "resetToken": false,
+                    "registrationTokenOperation": "None"
+                },
+                "vmTemplate": "",
+                "preferredAppGroupType": "RailApplications",
+                "migrationRequest": null,
+                "cloudPcResource": false,
+                "startVMOnConnect": true,
+                "ssoadfsAuthority": null,
+                "ssoClientId": null,
+                "ssoClientSecretKeyVaultPath": null,
+                "ssoSecretType": null,
+                "objectId": "7b7bc620-28f0-430c-a33f-2e50eb1c534d"
+            }
+        },
+        "vmInitialNumber": {
+            "value": 66
+        },
+        "intune": {
+            "value": false
+        },
+        "hostpoolResourceGroup": {
+            "value": "<Host Pool Resource Group Name>"
+        },
+        "hostpoolLocation": {
+            "value": "<Host Pool Location>"
+        },
+        "hostpoolName": {
+            "value": "<Host pool Name>"
+        },
+        "vmResourceGroup": {
+            "value": "<Resource Group where you'll store the VM's>"
+        },
+        "vmNamePrefix": {
+            "value": "<VM Prefix Name>"
+        },
+        "vmLocation": {
+            "value": "<VM Location>"
+        },
+        "availabilityOption": {
+            "value": "Value can be <AvailabilityZone or AvailabilitySet>"
+        },
+        "availabilitySetName": {
+            "value": ""
+        },
+        "createAvailabilitySet": {
+            "value": false
+        },
+        "availabilitySetUpdateDomainCount": {
+            "value": 5
+        },
+        "availabilitySetFaultDomainCount": {
+            "value": 2
+        },
+        "availabilityZones": {
+            "value": [
+                1,
+                2
+            ]
+        },
+        "vmImageType": {
+            "value": "CustomImage"
+        },
+        "vmSize": {
+            "value": "<Size used in the host pool>"
+        },
+        "vmNumberOfInstances": {
+            "value": 3
+        },
+        "vmDiskType": {
+            "value": "Standard_LRS"
+        },
+        "vmDiskSizeGB": {
+            "value": 0
+        },
+        "vmHibernate": {
+            "value": false
+        },
+        "bootDiagnostics": {
+            "value": {
+                "enabled": true,
+                "storageUri": "<Storage account URL>"
+            }
+        },
+        "securityType": {
+            "value": "Standard"
+        },
+        "secureBoot": {
+            "value": false
+        },
+        "vTPM": {
+            "value": false
+        },
+        "virtualNetworkResourceGroupName": {
+            "value": "<Name of the resource group where the vnet is>"
+        },
+        "existingVnetName": {
+            "value": "Name of the vnet"
+        },
+        "existingSubnetName": {
+            "value": "<Name of the subnet>"
+        },
+        "createNetworkSecurityGroup": {
+            "value": false
+        },
+        "aadJoin": {
+            "value": false
+        },
+        "administratorAccountUsername": {
+            "value": "<Name of the account used to join the VMs in the domain>"
+        },
+        "administratorAccountPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "<Key Vault URI>"
+                },
+                "secretName": "Name of the secret used to stores the passowrd of the account used to join the vms in the domain"
+            }
+        },
+        "domain": {
+            "value": "<domain name, ex: contoso.com>"
+        },
+        "ouPath": {
+            "value": "<OU distinghshed path Ex: OU=FSLOGIX,OU=AZURE-VIRTUAL-DESKTOP,OU=COMPUTERS,OU=ORGANIZATION,DC=estevaofranca,DC=com>"
+        },
+        "vmAdministratorAccountUsername": {
+            "value": "<Name of the local admin account>"
+        },
+        "vmAdministratorAccountPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "<Key Vault URI>"
+                },
+                "secretName": "<Name of the secret that stores the password of the local user>"
+            }
+        },
+        "availabilitySetTags": {
+            "value": {
+                "createdBy": "Azure DevOps Automation",
+                "vmHostPoolName": "[parameters('hostpoolName')]",
+                "azureBackupState": "false"
+            }
+        },
+        "networkInterfaceTags": {
+            "value": {
+                "createdBy": "Azure DevOps Automation",
+                "vmHostPoolName": "[parameters('hostpoolName')]",
+                "azureBackupState": "false"
+            }
+        },
+        "networkSecurityGroupTags": {
+            "value": {
+                "createdBy": "Azure DevOps Automation",
+                "vmHostPoolName": "[parameters('hostpoolName')]",
+                "azureBackupState": "false"
+            }
+        },
+        "virtualMachineTags": {
+            "value": {
+                "createdBy": "Azure DevOps Automation",
+                "vmHostPoolName": "[parameters('hostpoolName')]",
+                "azureBackupState": "false"
+            }
+        },
+        "imageTags": {
+            "value": {
+                "createdBy": "Azure DevOps Automation",
+                "vmHostPoolName": "[parameters('hostpoolName')]",
+                "azureBackupState": "false"
+            }
+        },
+        "deploymentId": {
+            "value": "aed15a62-2569-4b70-8022-63d132b1f069"
+        },
+        "apiVersion": {
+            "value": "2021-09-03-preview"
+        },
+        "vmCustomImageSourceId": {
+            "value": "<URI of the azure compute gallery image>"
+        },
+        "systemData": {
+            "value": {
+                "hostpoolUpdateFeature": false,
+                "aadJoinPreview": false,
+                "sessionHostConfigurationVersion": ""
+            }
+        }
+    }
+}

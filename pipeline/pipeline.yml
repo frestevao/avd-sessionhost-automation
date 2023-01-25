@@ -1,0 +1,139 @@
+variables:
+- name: KeyVaultName
+  value: ''
+- name: avdTokenSecret
+  value: ''
+- name: avdHostPoolName
+  value: ''
+- name: avdResourceGroupName
+  value: ''
+- name: subscriptionId
+  value: ''
+- name: organizationalUnity
+  value: ""
+- name: addsUserName
+  value: ""
+- name: addsPasswordKeyVaultSecretName
+  value: ''
+- name: addsDomainControllerName
+  value: ''
+- name: templateFile
+  value: ''
+- name: templateParametersFile
+  value: ''
+- name: workspaceId
+  value: ''
+- name: workspaceKey
+  value: ''
+
+
+name: "Deploying Azure Virtual Desktop Session Host"
+trigger: none
+schedules:
+- cron: ""
+  displayName: Sunday Deployment - AVD Session Hosts
+  branches:
+    include:
+      - main # Name of your branch
+
+jobs: 
+- job: Deployment
+  displayName: devOpsTask - Auto Task
+  pool:
+    name: 'azdvp-hydra'
+
+  steps:
+    - task: AzurePowerShell@5
+      displayName: 1. Notifying the active users
+      inputs:
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: filePath
+        scriptPath: "powershellAutomations/userNotification/userNotification.ps1"
+        scriptArguments:
+          -avdSubscriptionName $(subscriptionId) `
+          -avdResourceGroupName $(avdResourceGroupName) `
+          -avdHostPoolName $(avdHostPoolName)
+
+    - task: AzurePowerShell@5
+      displayName: 2. Deleting Session Hosts
+      inputs:
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: filePath
+        scriptPath: "powershellAutomations/deleteSessionHost/deleteSessionHost.ps1"
+        scriptArguments:
+          -avdSubscriptionName $(subscriptionId) `
+          -avdResourceGroupName $(avdResourceGroupName) `
+          -avdHostPoolName $(avdHostPoolName)
+
+    - task: AzurePowerShell@5
+      displayName: 3. Generating AVD Session Host Token
+      inputs:
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: filePath
+        scriptPath: "powershellAutomations/generateAvdTokenId/generateAvdTokenId.ps1"
+        scriptArguments:
+          -avdSubscriptionName $(subscriptionId) `
+          -avdHostPoolName $(avdHostPoolName) `
+          -avdResourceGroupName $(avdResourceGroupName) `
+          -keyVaultName $(keyVaultName) `
+          -avdTokenSecret $(avdTokenSecret) 
+
+    - task: AzurePowerShell@5
+      displayName:  4. Deleting ADDS Computer Accounts
+      inputs: 
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: filePath
+        scriptPath: "powershellAutomations/DeleteAdComputerAccount/deleteAdComputerAccount.ps1"
+        scriptArguments:
+          -ouPath $(organizationalUnity) `
+          -userName $(addsUserName) `
+          -kvName $(keyVaultName) `
+          -secretName $(addsPasswordKeyVaultSecretName) `
+          -subscriptionKeyVault $(subscriptionId) `
+          -domainControllerName $(addsDomainControllerName)
+
+    - task: AzurePowerShell@5
+      displayName:  5. Deploying Session Hosts
+      inputs: 
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: InlineScript
+        inline: |
+
+          #Set Az Subscription
+          Set-AzContext -Subscription $(subscriptionId)
+          Write-Host "Starting AVD Session Host deployment"
+          
+          $deploymentName = "deploying-az-host-pool-" + (Get-Random)
+          
+          $outputs = New-AzResourceGroupDeployment `
+            -Name $deploymentName `
+            -TemplateFile $(templateFile) `
+            -TemplateParameterFile $(templateParametersFile) `
+            -ResourceGroupName $(avdResourceGroupName)
+            
+          #show outputs
+          Write-Host ($outputs | Format-List | Out-String)
+    
+    - task: AzurePowerShell@5
+      displayName:  6. Configuring Log Analytics Workspace
+      inputs: 
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: 'AZ-DEV-SERVICE-CONNECT'
+        pwsh: true
+        scriptType: filePath
+        scriptPath: "powershellAutomations/addVmToLawsWorkspace/addVmToLawsWorkSpace.ps1"
+        scriptArguments:
+          -avdVmsResourceGroup $(avdResourceGroupName) `
+          -workspaceId $(workspaceId) `
+          -subscriptionLaws $(subscriptionId) `
+          -workspaceKey $(workspaceKey)
