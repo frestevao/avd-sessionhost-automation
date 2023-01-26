@@ -24,10 +24,8 @@ Contents:
         - [Code Repository](#code-repository)
     - [Azure](#azure)
         - [AVD Host Pool](#avd-hostpool)
-        - [AVD Session Host](#avd-session-hosts)
         - [Azure Compute Gallery](#azure-compute-gallery)
         - [Azure Key Vault](#azure-keyvaults)
-        - [Storage Account](#storage-account)
     - [Active Directory Domain Services (ADDS)](#active-directory-domain-services)
         - [Organizational Unity](#organizational-unity)
         - [Domain Join Account](#domain-join-account)
@@ -44,7 +42,7 @@ Contents:
 
 # __<a name="solution">Solution</a>__
 
-This solution was developed to help Azure Administrators to automate the mainatence process of AVD Environments where is required to recreate the session hosts due a image change or even for a quick deployment in another region or azure.
+This solution was developed to help Azure Administrators to automate the mainatence process of AVD Environments where is required to recreate the session hosts due a image change or even for a quick deployment in another region or azure. You can learn more about this project in [post](https://techf.cloud) on my blog.
 
 This automation may help you with:
 
@@ -55,6 +53,15 @@ This automation may help you with:
 The diagram below helps you to have a better understandment of how the automation works and which componentes are used on Azure and Azure DevOps.
 
 <img src="solutionDiagram.png" alt="project Diagram">
+
+The whole automation is executed in a pipeline that runs 6 powershell scripts, that are responsible to:
+
+- Notify Active Users.
+- Remove Session Hosts from the hostpool.
+- Delete the old VM's.
+- Delete the ADDS computer accounts.
+- Create the new session hosts.
+- (Optional) Configure the the VM's to report to a specific Log Analytics workspace in case the usage of the insights feature.
 
 # __<a name="descriptionOfTheComponents">Description of the Components</a>__
 
