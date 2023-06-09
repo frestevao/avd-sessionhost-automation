@@ -361,3 +361,23 @@ The [addVmToLawsWorkspace.ps1](https://github.com/frestevao/avd-sessionhost-auto
                             -avdVmsResourceGroup "Resource group used to store the AVD VMs"
 ```
 # __<a name="contributing">Contributing</a>__
+
+When contributing to a public repository, it's important to follow certain rules and guidelines to ensure a smooth and collaborative development process. Here are some recommended rules to consider when contributing to a public repository:
+
+1. Familiarize Yourself: Take the time to understand the project's goals, objectives, and coding conventions. Read the existing documentation, including the README file and any contribution guidelines provided.
+
+2. Communication: Before making any substantial changes, it's wise to communicate with the project maintainers or the community. This can help you gain insights, understand the current status, and prevent any duplication of effort.
+
+3. Fork and Branch: Fork the repository to your own GitHub account, and create a new branch for your changes. This allows you to work independently without disrupting the main repository.
+
+4. Small and Focused Commits: Make your commits small and focused, addressing a single issue or feature at a time. This makes it easier for maintainers to review and merge your changes. Include descriptive commit messages to explain the purpose of each commit.
+
+5. Code Quality: Maintain high code quality standards. Ensure that your code is well-formatted, adheres to the project's coding conventions, and follows best practices. Use meaningful variable and function names, write clear comments, and consider including relevant unit tests.
+
+6. Test Your Changes: Before submitting a pull request, test your changes thoroughly to verify that they work as intended. Run any existing test suites, and consider adding new tests to cover your modifications.
+
+7. Documentation Updates: If your changes impact the project's documentation, ensure that you update the relevant documentation files accordingly. This helps to keep the documentation up-to-date and aligned with the codebase.
+
+8. Pull Request Submission: When you're ready to submit your changes, create a clear and concise pull request. Include a descriptive title, a summary of the changes made, and any relevant context. Be responsive to feedback and maintain a constructive attitude during the review process.
+
+9. Respect the Community: Be respectful and considerate when interacting with the project maintainers and other contributors. Follow the project's code of conduct and community guidelines, and avoid engaging in any form of harassment or disrespectful behavior.
